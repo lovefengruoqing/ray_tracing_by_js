@@ -13,6 +13,6 @@ export default class Ray {
   }
 
   getPointAtParameter(t) {
-    return this.A + this.B * t;
+    return this.A.clone().add(this.B.clone().multiplyScalar(t));
   }
 }
