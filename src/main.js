@@ -2,6 +2,8 @@ import { resetSize } from './util.js';
 import Vec3 from "./Vec3.js";
 import Ray from "./Ray.js";
 import Color from './Color.js';
+import Sphere from "./Sphere.js";
+import Box from "./Box.js";
 
 const canvas = document.querySelector('#root');
 const ctx = canvas.getContext('2d');
@@ -17,6 +19,13 @@ const vertical = new Vec3(0, 2, 0);
 const horizontal = new Vec3(4, 0, 0);
 const origin = new Vec3(0, 0, 0);
 
+let list = [
+  new Sphere(new Vec3(0, 0, -1), 0.5),
+  new Sphere(new Vec3(-1, 0, -1), 0.2),
+  new Sphere(new Vec3(0, -100.5, -1), 100),
+];
+let box = new Box(list, list.length);
+
 // Iterate through every pixel
 for (let j = 0; j < h; j++) {
   for (let i = 0; i < w; i++) {
@@ -25,8 +34,8 @@ for (let j = 0; j < h; j++) {
 
     const r = new Ray(origin, lowLeftCorner.clone().add(
       horizontal.clone().multiplyScalar(u)).add(vertical.clone().multiplyScalar(v)));
-      
-    let color = new Color(r);
+
+    let color = new Color(r, box);
 
     let pos = (j * w + i) * 4;
 
