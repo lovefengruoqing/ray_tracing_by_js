@@ -4,6 +4,7 @@ import Ray from "./Ray.js";
 import Color from './Color.js';
 import Sphere from "./Sphere.js";
 import Box from "./Box.js";
+import Camera from './Camera.js';
 
 const canvas = document.querySelector('#root');
 const ctx = canvas.getContext('2d');
@@ -12,16 +13,14 @@ resetSize(canvas);
 
 const w = 200;
 const h = 100;
+const ns = 20;
 const arr = new Uint8ClampedArray(4 * w * h);
 
-const lowLeftCorner = new Vec3(-2, -1, -1);
-const vertical = new Vec3(0, 2, 0);
-const horizontal = new Vec3(4, 0, 0);
-const origin = new Vec3(0, 0, 0);
+const camera = new Camera();
 
 let list = [
   new Sphere(new Vec3(0, 0, -1), 0.5),
-  new Sphere(new Vec3(-1, 0, -1), 0.2),
+  // new Sphere(new Vec3(-1, 0, -1), 0.2),
   new Sphere(new Vec3(0, -100.5, -1), 100),
 ];
 let box = new Box(list, list.length);
@@ -29,13 +28,16 @@ let box = new Box(list, list.length);
 // Iterate through every pixel
 for (let j = 0; j < h; j++) {
   for (let i = 0; i < w; i++) {
-    let u = i / w;
-    let v = 1 - j / h;
+    let color = new Vec3(0, 0, 0);
+    for (let k = 0; k < ns; k++) {
+      let u = (i + Math.random()) / w;
+      let v = 1 - (j + Math.random()) / h;
 
-    const r = new Ray(origin, lowLeftCorner.clone().add(
-      horizontal.clone().multiplyScalar(u)).add(vertical.clone().multiplyScalar(v)));
+      const r = camera.getRay(u, v);
 
-    let color = new Color(r, box);
+      color.add(new Color(r, box));
+    }
+    color.divideScalar(ns);
 
     let pos = (j * w + i) * 4;
 
